@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <div class="search">
+            <input type="text" id="countryInput" placeholder="Enter country name">
+            <button id="searchBtn">Search</button>
+        </div>
+        <div class="weather-info">
+            <h2 id="location"></h2>
+            <p id="temperature"></p>
+            <p id="description"></p>
+            <p id="humidity"></p>
+            <p id="windSpeed"></p>
+            <img id="weatherIcon" src="" alt="Weather Icon">
+        </div>
+        <div class="error-message" id="errorMessage"></div>
+    </div>
+
+    <script>
+        document.getElementById('searchBtn').addEventListener('click', fetchWeather);
+
+        function fetchWeather() {
+            const country = document.getElementById('countryInput').value.trim();
+            const apiKey = '4ad908c9b5d00c06f4060c650a4e532c'; // Your OpenWeatherMap API key
+
+            // Hardcoded capital cities and their coordinates (latitude and longitude)
+            const capitals = {
+                "Afghanistan": { lat: 34.52813, lon: 69.17233 },
+                "Albania": { lat: 41.3275, lon: 19.81889 },
+                "Algeria": { lat: 36.7525, lon: 3.04197 },
+                "Andorra": { lat: 42.50779, lon: 1.52109 },
+                "Angola": { lat: -8.83833, lon: 13.23444 },
+                "Argentina": { lat: -34.61315, lon: -58.37723 },
+                "Armenia": { lat: 40.18111, lon: 44.51361 },
+                "Australia": { lat: -35.28346, lon: 149.12807 },
+                "Austria": { lat: 48.20639, lon: 16.3709 },
+                "Azerbaijan": { lat: 40.37767, lon: 49.89201 },
+                "Brazil": { lat: -15.7801, lon: -47.9292 },
+                "Canada": { lat: 45.4215, lon: -75.6972 },
+                "China": { lat: 39.9042, lon: 116.4074 },
+                "France": { lat: 48.8566, lon: 2.3522 },
+                "Germany": { lat: 52.5200, lon: 13.4050 },
+                "India": { lat: 28.6139, lon: 77.2090 },
+                "Indonesia": { lat: -6.2088, lon: 106.8456 },
+                "Italy": { lat: 41.9028, lon: 12.4964 },
+                "Japan": { lat: 35.6895, lon: 139.6917 },
+                "Lebanon": { lat: 33.88863, lon: 35.49548 },
+                "Mexico": { lat: 19.4326, lon: -99.1332 },
+                "Russia": { lat: 55.7558, lon: 37.6173 },
+                "South Africa": { lat: -25.7461, lon: 28.1881 },
+                "United Kingdom": { lat: 51.5074, lon: -0.1278 },
+                "United States": { lat: 38.89511, lon: -77.03637 },
+                // Add all other countries here
+            };
+
+            if (capitals[country]) {
+                const { lat, lon } = capitals[country];
+                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+                fetch(weatherUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Weather data not available');
+                        }
+                        return response.json();
+                    })
+                    .then(data => displayWeather(data))
+                    .catch(error => {
+                        document.getElementById('errorMessage').textContent = error.message;
+                    });
+            } else {
+                document.getElementById('errorMessage').textContent = 'Country not found or capital coordinates not available.';
+            }
+        }
+
+        function displayWeather(data) {
+            const city = data.name;
+            const country = data.sys.country;
+            const weather = data.weather[0];
+
+            document.getElementById('location').textContent = `${city}, ${country}`;
+            document.getElementById('temperature').textContent = `Temperature: ${(data.main.temp - 273.15).toFixed(2)} °C`; // Convert from Kelvin to Celsius
+            document.getElementById('description').textContent = `Condition: ${weather.description}`;
+            document.getElementById('humidity').textContent = `Humidity: ${data.main.humidity}%`;
+            document.getElementById('windSpeed').textContent = `Wind Speed: ${data.wind.speed} m/s`;
+            document.getElementById('weatherIcon').src = `http://openweathermap.org/img/wn/${weather.icon}.png`;
+        }
+    </script>
+</body>
+</html>
