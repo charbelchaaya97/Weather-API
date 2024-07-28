@@ -28,7 +28,14 @@
         document.getElementById('searchBtn').addEventListener('click', fetchWeather);
 
         function fetchWeather() {
-            const country = document.getElementById('countryInput').value.trim();
+            const inputElement = document.getElementById('countryInput');
+const country1 = inputElement.value.trim();
+const formattedCountry = country1.charAt(0).toUpperCase() + country1.slice(1).toLowerCase();
+const country=formattedCountry;
+
+
+
+
             const apiKey = '4ad908c9b5d00c06f4060c650a4e532c'; // Your OpenWeatherMap API key
 
             // Hardcoded capital cities and their coordinates (latitude and longitude)
